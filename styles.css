@@ -38,11 +38,38 @@ button:hover{background:var(--fva-red-dark)}
 button.secondary{background:#fff;color:var(--fva-red);border:1px solid var(--fva-red)}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 
-/* Preview */
-.preview{display:flex; gap:16px; align-items:flex-start}
-.preview img{max-height:120px;border:1px dashed var(--border);border-radius:8px;background:#fafafa}
+/* Preview — tamanho A4 na tela (aprox. 96 dpi) */
+.preview{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  justify-content:center;
+  /* ocupa a largura inteira da grade dessa seção sem afetar o resto */
+  grid-column: 1 / -1;
+}
+#previewImg{
+  display:block;
+  width:auto;
+  height:auto;
+  /* ~A4 retrato: 8.27in * 96dpi ≈ 794px (largura) */
+  max-width: min(100%, 794px);
+  /* ~11.69in * 96dpi ≈ 1123px (altura) */
+  max-height: 1123px;
+  object-fit: contain;
+  border:1px dashed var(--border);
+  border-radius:8px;
+  background:#fafafa;
+}
+/* No celular, limita pela altura da viewport para não estourar a tela */
+@media (max-width: 820px){
+  #previewImg{
+    max-width: 100%;
+    max-height: calc(100vh - 160px);
+  }
+}
 
 .table{width:100%;border-collapse:collapse}
 .table th,.table td{border-bottom:1px solid var(--border);padding:8px;text-align:left}
 
 footer{padding:16px;text-align:center;color:var(--muted)}
+``
