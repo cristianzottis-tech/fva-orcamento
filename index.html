@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Orçamentação de Usinagem — FVA</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="assets/logo_fva.svg" alt="FVA"/>
+        <h1>Orçamentação de Usinagem — MVP</h1>
+      </div>
+      <small>Preencha os dados. O cálculo é feito no navegador (client-side).</small>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1) Dados gerais</h2>
+      <div class="grid">
+        <label>Nº da cotação <input id="numCot" placeholder="022/2026"/></label>
+        <label>Código da peça <input id="codigo" placeholder="ACX2077520"/></label>
+        <label>Cliente <input id="cliente" placeholder="Nelson"/></label>
+        <label>Quantidade anual <input id="qtde" type="number" value="2554"/></label>
+        <label>Complexidade
+          <select id="complexidade"><option>simples</option><option>média</option><option>complexa</option></select>
+        </label>
+        <label>Máquina
+          <select id="maquina"><option>Torno CNC ROMI</option><option>Torno suíço</option><option>Centro de usinagem</option><option>Misto</option></select>
+        </label>
+        <label>Custo-hora máquina (R$/h) <input id="rph" type="number" step="0.01" value="120"/></label>
+        <label>Anexar desenho (jpg/png/pdf) <input id="desenho" type="file" accept="image/*,.pdf"/></label>
+        <div class="preview">
+          <img id="previewImg" alt="Prévia do desenho"/>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <button id="btnEnviar">ENVIAR (vendas)</button>
+        <button class="secondary" id="btnLink">Gerar link pré-preenchido</button>
+        <button class="secondary" id="btnCopiar">Copiar link</button>
+      </div>
+      <small>O botão ENVIAR envia estes dados por e-mail/Flow para a engenharia e gera um link com a primeira parte pré-preenchida.</small>
+    </section>
+
+    <section class="card">
+      <h2>2) Material</h2>
+      <div class="grid">
+        <label>Material <input id="material" placeholder="Aço ASTM A36" value="Aço ASTM A36"/></label>
+        <label>Formato
+          <select id="formato">
+            <option value="tubo">Tubo</option>
+            <option value="redondo">Barra redonda</option>
+            <option value="sextavado">Barra sextavada</option>
+            <option value="quadrado">Barra quadrada</option>
+            <option value="retangular">Barra retangular</option>
+          </select>
+        </label>
+        <label>Ø externo / Largura (mm) <input id="od" type="number" step="0.01" value="25.4"/></label>
+        <label>Parede (mm) — só para Tubo <input id="parede" type="number" step="0.01" value="4.78"/></label>
+        <label>Altura (mm) — retangular <input id="altura" type="number" step="0.01"/></label>
+        <label>Densidade (g/cm³) <input id="dens" type="number" step="0.01" value="7.85"/></label>
+        <label>Preço material (R$/kg) <input id="precoKg" type="number" step="0.01" value="36.14"/></label>
+        <label>Comp. peça (mm) <input id="compPeca" type="number" step="0.01" value="46"/></label>
+        <label>Sobra por peça (mm) <input id="sobra" type="number" step="0.01" value="3"/></label>
+        <label>Comp. barra nominal (mm) <input id="barraNom" type="number" value="3000"/></label>
+        <label>Comp. barra útil (mm) <input id="barraUtil" type="number" value="2850"/></label>
+        <label>Perda por cavaco (somente latão) % <input id="perdaCavaco" type="number" step="0.1" value="0"/></label>
+        <label>Crédito sucata?
+          <select id="usaSucata"><option value="nao">Não</option><option value="sim">Sim</option></select>
+        </label>
+        <label>Preço sucata (R$/kg) <input id="precoSucata" type="number" step="0.01" value="0"/></label>
+        <label><strong>Peso bruto (kg)</strong> <input id="pesoBruto" type="number" step="0.0001" readonly/></label>
+        <label>Remoção de material (g) <input id="remocaoG" type="number" step="1" value="0"/></label>
+        <label><strong>Peso líquido (kg)</strong> <input id="pesoLiquido" type="number" step="0.0001" readonly/></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3) Usinagem & Setup</h2>
+      <div class="grid">
+        <label>Tempo de ciclo (s) <input id="ciclo" type="number" step="1" value="35"/></label>
+        <label>Setup (horas) <input id="setupH" type="number" step="0.1" value="5"/></label>
+        <label>Rate Setup (R$/h) <input id="setupRph" type="number" step="0.01" value="120"/></label>
+        <label>Setup por <select id="setupTipo"><option value="ano">ano</option><option value="lote">lote</option></select></label>
+        <label>Tamanho do lote (se por lote) <input id="tamLote" type="number" value="2554"/></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4) Operações manuais</h2>
+      <div class="grid">
+        <label>Revisão (R$/pc) <input id="rev" type="number" step="0.001" value="0.0545"/></label>
+        <label>Escariar (R$/pc) <input id="esc" type="number" step="0.001" value="0.0545"/></label>
+        <label>Contar (R$/pc) <input id="cont" type="number" step="0.001" value="0.0545"/></label>
+        <label>Embalar (R$/pc) <input id="emb" type="number" step="0.001" value="0.0545"/></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>5) Ferramentas (desgaste + trocas)</h2>
+      <table id="tblFerr" class="table">
+        <thead><tr>
+          <th>Usar</th><th>Ferramenta</th><th>Preço (R$)</th><th>№ arestas</th><th>Peças/aresta</th><th>Troca (s)</th><th>R$/h troca (opc.)</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td>Lâmina de corte</td>
+            <td><input type="number" step="0.01" value="80"/></td>
+            <td><input type="number" step="1" value="2"/></td>
+            <td><input type="number" step="1" value="1200"/></td>
+            <td><input type="number" step="1" value="60"/></td>
+            <td><input type="number" step="0.01"/></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td>Pastilha de facear</td>
+            <td><input type="number" step="0.01" value="25"/></td>
+            <td><input type="number" step="1" value="2"/></td>
+            <td><input type="number" step="1" value="3000"/></td>
+            <td><input type="number" step="1" value="45"/></td>
+            <td><input type="number" step="0.01"/></td>
+          </tr>
+        </tbody>
+      </table>
+      <button id="addFerr">+ Adicionar ferramenta</button>
+    </section>
+
+    <section class="actions" style="margin:16px 0">
+      <button id="calc">Calcular custos</button>
+      <button class="secondary" id="exportJson">Exportar JSON</button>
+    </section>
+
+    <section class="card" id="resultado" style="display:none;">
+      <h2>Resultado</h2>
+      <div id="kpis"></div>
+      <h3>Resumo (R$/peça)</h3>
+      <div id="resumo"></div>
+      <h3>Cenários (tempo de ciclo)</h3>
+      <div id="cenarios"></div>
+    </section>
+  </main>
+
+  <footer>
+    <small>MVP estático. Para enviar e anexar automaticamente por e-mail, configure o Power Automate ou serviço SMTP e coloque a URL no JS.</small>
+  </footer>
+
+  <script src="cost.js"></script>
+</body>
+</html>
